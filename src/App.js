@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 
-import InputCurrencies from "./components/InputCurrencies";
-import CurrenciesResult from "./components/CurrenciesResult";
-
 function App() {
   const [listCountries, setlistCountries] = useState([]);
-  const [inputValue, setInputValue] = useState(10000)
+  const [inputValue, setInputValue] = useState(1000)
+  const [inputCurrency, setInputCurrency] = useState({symbol: 'AED', name: 'United Arab Emirates Dirham'})
+  const [convertList, setconvertList] = useState([])
 
   useEffect(() => {
     axios.get('http://api.exchangeratesapi.io/v1/symbols?access_key=b503a519d4052bba81e33daf261f24d8')
@@ -15,7 +14,19 @@ function App() {
   }, [])
 
   const handleInput = e => {
-    setInputValue(e.target.value)
+    let value = e.target.value;
+    let regex = /\D/g;
+    
+    if(!regex.test(value)) {
+      setInputValue(value)
+    }
+  }
+
+  const handleInputCurrency = e => {
+    let value = e.target.value;
+    let selectedText = e.target.selectedOptions[0].text.split(' ').slice(2).join(' ');
+
+    setInputCurrency({symbol: value, name: selectedText})
   }
 
   const showSelect = () => {
@@ -28,31 +39,38 @@ function App() {
       form.classList.add('hidden');
     }
   }
-  
+
+  const handleAddCurrency = event => {
+    let value = event.target.value;
+  }
+
   return (
     <>
       <div className="bg-blue-900 text-white p-10 flex flex-row flex-wrap">
         <div>
-          <p>USD United States Dollars</p>
-          <p className="text-lg font-semibold">USD</p>
+          <p>{inputCurrency.name}</p>
+          <select onChange={handleInputCurrency} className="bg-transparent border-b border-white outline-none mt-2.5 pb-2.5 text-lg font-semibold">
+            {Object.entries(listCountries).map(([key, value]) => <option className="text-blue-900" key={key} value={key}>{key} - {value}</option>)}
+          </select>
         </div>
 
         <div className="flex flex-grow items-end justify-end">
-          <input type="text" className='bg-transparent text-lg outline-none border-b border-gray-400 pb-2 focus:border-b-2' value={inputValue} onChange={handleInput} />
+          <input type="text" className='bg-transparent text-lg outline-none border-b border-white pb-2.5 focus:border-b-2 font-semibold' value={inputValue} onChange={handleInput} />
         </div>
       </div>
 
       <div className="mt-10 px-10">
       </div>
-      <div className="mt-5 px-10 text-center">
-        <button onClick={showSelect} className="add mx-auto bg-green-600 text-white px-5 py-2.5 rounded-md font-semibold">+ Add More Currencies</button>
 
-        <div className="form-add hidden flex-flow flex-wrap justify-center mt-7">
-          <select className='flex-grow border border-gray-200 rounded-l-md px-5 py-2.5'>
-            {Object.entries(listCountries).map(([key, value]) => <option key={key} value={key}>{key} - {value}</option>)}
+      <div className="mt-5 px-10 text-center">
+        <button onClick={showSelect} className="add mx-auto bg-green-600 text-white px-5 py-2.5 rounded-md font-semibold hover:bg-blue-900 transition duration-300">+ Add New Currencies</button>
+
+        <form onSubmit={handleAddCurrency} className="form-add hidden flex-flow flex-wrap justify-center mt-7">
+          <select className='flex-grow border border-gray-200 rounded-l-md px-5 py-2.5 outline-none'>
+            {Object.entries(listCountries).map(([key, value]) => <option key={key} value={key}>{value}</option>)}
           </select>
-          <button className="w-44 bg-green-600 text-white font-semibold rounded-r-md">Add</button>
-        </div>
+          <button type="submit" className="w-44 bg-green-600 text-white font-semibold rounded-r-md hover:bg-blue-900 transition duration-300">Add</button>
+        </form>
       </div>
     </>
 
