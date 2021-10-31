@@ -13,7 +13,7 @@ const AddCurrencies = () => {
     return (
         <div className="mt-5 px-10 text-center">
             <button className="add mx-auto bg-green-600 text-white px-5 py-2.5 rounded-md font-semibold">+ Add More Currencies</button>
-            <div className="form-add flex flex-flow flex-wrap justify-center">
+            <div className="form-add flex flex-flow flex-wrap justify-center mt-7">
                 <select className='flex-grow border border-gray-200 rounded-l-md px-5 py-2.5'>
                     {Object.entries(listCountries).map(([key, value]) => <option key={key} value={key}>{key} - {value}</option>)}
                 </select>
